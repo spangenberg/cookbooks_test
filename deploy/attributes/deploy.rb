@@ -30,9 +30,6 @@ node[:deploy].each do |application, deploy|
          self[:passwd][self[:deploy][application][:user]][:dir] || "/home/#{self[:deploy][application][:user]}"
 
   default[:deploy][application][:home] = home
-  default[:deploy][application][:stack][:recipe] = "passenger_apache2::rails"
-  default[:deploy][application][:stack][:needs_reload] = true
-  default[:deploy][application][:stack][:service] = 'apache2'
 
   default[:deploy][application][:sleep_before_restart] = 0
   default[:deploy][application][:restart_command] = "touch tmp/restart.txt"
@@ -50,6 +47,3 @@ node[:deploy].each do |application, deploy|
   # nodejs
   default[:deploy][application][:nodejs][:restart_command] = "monit restart node_web_app_#{application}"
 end
-
-default[:logrotate][:rotate] = 30
-default[:logrotate][:dateformat] = false # set to '-%Y%m%d' to have date formatted logs

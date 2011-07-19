@@ -6,6 +6,7 @@ node[:deploy].each do |application, deploy|
     Chef::Log.debug("Skipping unicorn::rails application #{application} as it is not an Rails app")
     next
   end
+# TODO: SSL Krams
 =begin  
   template "/etc/apache2/ssl/#{deploy[:domains].first}.crt" do
     mode '0600'
@@ -34,12 +35,4 @@ node[:deploy].each do |application, deploy|
     end
   end
 =end
-  # move away default virtual host so that the Rails app becomes the default virtual host
-  execute "mv away default virtual host" do
-    action :run
-    command "mv /etc/apache2/sites-enabled/000-default /etc/apache2/sites-enabled/zzz-default"
-    only_if do 
-      File.exists?("#{node[:apache][:dir]}/sites-enabled/000-default") 
-    end
-  end
 end

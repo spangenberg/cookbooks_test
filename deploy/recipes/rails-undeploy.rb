@@ -11,7 +11,7 @@ node[:deploy].each do |application, deploy|
     next
   end
   
-  include_recipe "#{deploy[:stack][:service]}::service" if deploy[:stack][:service]
+  include_recipe "#{node[:scalarium][:rails_stack][:service]}::service" if node[:scalarium][:rails_stack][:service]
 
   link "/etc/apache2/sites-enabled/#{application}.conf" do
     action :delete
@@ -19,9 +19,7 @@ node[:deploy].each do |application, deploy|
       File.exists?("/etc/apache2/sites-enabled/#{application}.conf")
     end
     
-    if deploy[:stack][:needs_reload]
-      notifies :restart, resources(:service => deploy[:stack][:service])
-    end
+    notifies :restart, resources(:service => node[:scalarium][:rails_stack][:service])
   end
 
   file "/etc/apache2/sites-available/#{application}.conf" do
@@ -35,10 +33,8 @@ node[:deploy].each do |application, deploy|
     recursive true
     action :delete
 
-    if deploy[:stack][:needs_reload]
-      notifies :restart, resources(:service => deploy[:stack][:service])
-    end
-
+    notifies :restart, resources(:service => node[:scalarium][:rails_stack][:service])
+    
     only_if do 
       File.exists?("#{deploy[:deploy_to]}")
     end
