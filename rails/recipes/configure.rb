@@ -1,10 +1,10 @@
-
 include_recipe "deploy"
 
 node[:deploy].each do |application, deploy|
   deploy = node[:deploy][application]
 
   execute "restart Rails app #{application}" do
+    # TODO: Add stack specific restart
     cwd deploy[:current_path]
     command "touch tmp/restart.txt"
     action :nothing

@@ -7,6 +7,7 @@ supports "ubuntu", ">=  8.10"
 recipe "rails::configure", "Re-configure a Rails application"
 
 depends "apache2"
+depends "nginx"
 
 attribute "rails",
   :display_name => "Rails",

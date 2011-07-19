@@ -109,16 +109,19 @@ define :scalarium_deploy do
 
   if deploy[:application_type] == 'rails' && node[:scalarium][:instance][:roles].include?('rails-app')
     case node[:scalarium][:rails_stack]
-    when "apache_passenger"
+
+    when 'apache_passenger'
       passenger_web_app do
         application application
         deploy deploy
       end
-    when "nginx_unicorn"
+
+    when 'nginx_unicorn'
       unicorn_web_app do
         application application
         deploy deploy
       end
+
     else
       raise "Unsupport Rails stack"
     end
