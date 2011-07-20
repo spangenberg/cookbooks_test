@@ -113,12 +113,14 @@ define :scalarium_deploy do
     case node[:scalarium][:rails_stack][:name]
 
     when 'apache_passenger'
+      Chef::Log.error("Passenger")
       passenger_web_app do
         application application
         deploy deploy
       end
 
     when 'nginx_unicorn'
+      Chef::Log.error("Unicorn")
       unicorn_web_app do
         application application
         deploy deploy
