@@ -26,6 +26,6 @@ define :unicorn_web_app do
     cookbook "unicorn"
     deploy deploy
     template "nginx_unicorn_web_app.erb"
-    application application
+    application deploy
   end
 end
