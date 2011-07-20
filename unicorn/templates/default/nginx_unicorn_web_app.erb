@@ -1,11 +1,3 @@
-events {
-  worker_connections 1024; # increase if you have lots of clients
-  # Set this to on if you have more than 1 working processes
-  # This will allow only one child to watch the pollset and accept
-  # a connection to a socket
-  accept_mutex off; # "on" if nginx worker_processes > 1
-}
-
 http {
   include mime.types;
   default_type application/octet-stream;
