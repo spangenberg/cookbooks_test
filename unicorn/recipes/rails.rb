@@ -19,7 +19,7 @@ node[:deploy].each do |application, deploy|
     start_command "#{deploy[:deploy_to]}/shared/scripts/unicorn start"
     stop_command "#{deploy[:deploy_to]}/shared/scripts/unicorn stop"
     restart_command "#{deploy[:deploy_to]}/shared/scripts/unicorn restart"
-    status_command "ps aux | grep unicorn_rails | grep #{deploy[:deploy_to]}"
+    status_command "#{deploy[:deploy_to]}/shared/scripts/unicorn status"
     action :nothing
   end
   
