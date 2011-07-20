@@ -10,6 +10,7 @@ end
 
 def stop_unicorn
   `kill -QUIT \`cat #{PID_PATH}\``
+  `rm #{PID_PATH}`
 end
 
 def restart_unicorn
@@ -31,7 +32,7 @@ def status_unicorn
 end
 
 def unicorn_running?
-  if File.exists?(PID_PATH) && pid = File.read(PID_PATH).chomp && system("ps aux | grep #{pid} | grep -v grep > /dev/null")
+  if File.exists?(PID_PATH) && (pid = File.read(PID_PATH).chomp) && system("ps aux | grep #{pid} | grep -v grep > /dev/null")
     pid
   else
     false
