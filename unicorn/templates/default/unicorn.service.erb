@@ -15,13 +15,16 @@ def start_unicorn
 end
 
 def stop_unicorn
-  `kill -QUIT \`cat #{PID_PATH}\``
-  `rm #{PID_PATH}`
+  if system("kill -QUIT `cat #{PID_PATH}`")
+    `rm #{PID_PATH}`
+  else
+    exit 1
+  end
 end
 
 def restart_unicorn
 	if unicorn_running?
-		`kill -HUP \`cat #{PID_PATH}\``
+		system("kill -HUP `cat #{PID_PATH}`") || exit 1
 	else
 		start_unicorn
 	end
