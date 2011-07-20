@@ -32,7 +32,7 @@ end
 
 def unicorn_running?
   if File.exists?(PID_PATH) && pid = File.read(PID_PATH).chomp
-    system("ps aux | grep #{pid}") == 0
+    system("ps aux | grep #{pid} | grep -v grep") == 0
   else
     false
   end
