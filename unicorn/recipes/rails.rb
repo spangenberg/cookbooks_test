@@ -7,8 +7,9 @@ node[:deploy].each do |application, deploy|
     next
   end
 
-  execute "slapadd" do
-    command "cd #{deploy[:current_path]} && unicorn_rails &"
+  execute "unicorn_rails" do
+    cwd "#{deploy[:deploy_to]}/current"
+    command "unicorn_rails"
     action :run
   end
 # TODO: SSL Krams
