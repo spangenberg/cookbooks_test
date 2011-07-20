@@ -10,7 +10,7 @@ node[:deploy].each do |application, deploy|
   execute "unicorn_rails" do
     cwd "#{deploy[:deploy_to]}/current"
     command "unicorn_rails"
-    action :run
+    action :run
   end
 # TODO: SSL Krams
 =begin  
