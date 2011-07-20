@@ -1,6 +1,6 @@
 worker_processes <%= node[:unicorn][:worker_processes] %>
 
-user "<%= @deploy[:user]%>", "<%= @deploy[:group]%>"
+user "<%= @deploy[:user]%>"
 
 working_directory "<%= @deploy[:deploy_to]%>/current"
 
