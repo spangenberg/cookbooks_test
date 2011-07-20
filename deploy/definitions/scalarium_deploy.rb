@@ -108,6 +108,8 @@ define :scalarium_deploy do
   end
 
   if deploy[:application_type] == 'rails' && node[:scalarium][:instance][:roles].include?('rails-app')
+    Chef::Log.error("ROFLCOPTER")
+    Chef::Log.error("#{node[:scalarium][:rails_stack].inspect}")
     case node[:scalarium][:rails_stack]
 
     when 'apache_passenger'

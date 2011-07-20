@@ -2,7 +2,6 @@ define :unicorn_web_app do
   deploy = params[:deploy]
   application = params[:application]
 
-Chef::Log.error("unicorn_web_app.rb")
   ruby_block 'Determine Unicorn application type' do
     inner_deploy = deploy
     inner_application = application
