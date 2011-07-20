@@ -1,16 +1,74 @@
-upstream unicorn_<%= @application[:domains].first %> {
-  server unix:/tmp/unicorn.<%= @application[:domains].first %>.sock fail_timeout=0;
+worker_processes 1;
+
+events {
+  worker_connections 1024; # increase if you have lots of clients
+  # Set this to on if you have more than 1 working processes
+  # This will allow only one child to watch the pollset and accept
+  # a connection to a socket
+  accept_mutex off; # "on" if nginx worker_processes > 1
 }
 
-server {
-  listen   80;
-  server_name  <%= @application[:domains].join(" ") %> <%= node[:hostname] %>;
-  access_log  <%= node[:nginx][:log_dir] %>/<%= @application[:domains].first %>.access.log;
+http {
+  include mime.types;
+  default_type application/octet-stream;
+  access_log <%= node[:nginx][:log_dir] %>/<%= @application[:domains].first %>.access.log combined;
 
-  location / {
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_redirect off;
-    proxy_pass http://unicorn_<%= @application[:domains].first %>;
+  # This tells Nginx to ignore the contents of a file it is sending
+  # and uses the kernel sendfile instead
+  sendfile on;
+
+  # Set this to on if you have sendfile on
+  # It will prepend the HTTP response headers before
+  # calling sendfile()
+  tcp_nopush on;
+
+  # This disables the "Nagle buffering algorithm" (Nginx Docs)
+  # Good for websites that send a lot of small requests that
+  # don't need a response
+  tcp_nodelay off;
+
+  gzip on;
+  gzip_http_version 1.0;
+  gzip_proxied any;
+  gzip_min_length 500;
+  gzip_disable "MSIE [1-6]\.";
+  gzip_types text/plain text/html text/xml text/css
+             text/comma-separated-values
+             text/javascript application/x-javascript
+             application/atom+xml;
+
+  upstream unicorn_<%= @application[:domains].first %> {
+   # This is the socket we configured in unicorn.rb
+   server unix:/tmp/unicorn.<%= @application[:domains].first %>.sock;
+   fail_timeout=0;
+  }
+
+  server {
+    listen 80;
+    client_max_body_size 4G;
+    server_name _;
+
+    keepalive_timeout 5;
+
+    # Location of our static files
+    root <%= @application[:absolute_document_root] %>/public;
+
+    location / {
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_redirect off;
+
+      # If you don't find the filename in the static files
+      # Then request it from the unicorn server
+      if (!-f $request_filename) {
+        proxy_pass http://unicorn_<%= @application[:domains].first %>;
+        break;
+      }
+    }
+
+    error_page 500 502 503 504 /500.html;
+    location = /500.html {
+      root <%= @application[:absolute_document_root] %>/public;
+    }
   }
 }
