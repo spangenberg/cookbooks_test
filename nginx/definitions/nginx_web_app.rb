@@ -1,5 +1,6 @@
 define :nginx_web_app, :template => "site.erb", :enable => true do
   
+  application = params[:application]
   application_name = params[:name]
 
   template "/etc/nginx/sites-available/#{application_name}" do
@@ -12,6 +13,7 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
       cookbook params[:cookbook]
     end
     variables(
+      :application => application,
       :application_name => application_name,
       :params => params
     )
