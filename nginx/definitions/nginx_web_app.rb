@@ -1,4 +1,4 @@
-define :nginx_web_app, :template => "nginx_web_app.conf.erb" do
+define :nginx_web_app, :template => "site.erb", :enable => true do
   
   application_name = params[:name]
 
@@ -20,7 +20,19 @@ define :nginx_web_app, :template => "nginx_web_app.conf.erb" do
     end
   end
   
-  nginx_site "#{params[:name]}.conf" do
-    enable enable_setting
+  include_recipe "nginx::service"
+
+  if params[:enable]
+    execute "nxensite #{params[:name]}" do
+      command "/usr/sbin/nxensite #{params[:name]}"
+      notifies :reload, resources(:service => "nginx")
+      not_if do File.symlink?("#{node[:nginx][:dir]}/sites-enabled/#{params[:name]}") end
+    end
+  else
+    execute "nxdissite #{params[:name]}" do
+      command "/usr/sbin/nxdissite #{params[:name]}"
+      notifies :reload, resources(:service => "nginx")
+      only_if do File.symlink?("#{node[:nginx][:dir]}/sites-enabled/#{params[:name]}") end
+    end
   end
 end

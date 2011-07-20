@@ -70,5 +70,5 @@ node[:deploy].each do |application, deploy|
     action :delete
   end
   
-  nginx_site application
+  nginx_web_app application
 end
