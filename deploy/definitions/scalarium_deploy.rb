@@ -127,8 +127,6 @@ define :scalarium_deploy do
     else
       raise "Unsupport Rails stack"
     end
-    
-    include_recipe node[:scalarium][:rails_stack][:recipe]
   end
 
   template "/etc/logrotate.d/scalarium_app_#{application}" do

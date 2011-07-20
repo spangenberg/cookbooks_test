@@ -7,14 +7,6 @@ node[:deploy].each do |application, deploy|
     next
   end
   
-  service "unicorn_#{application}" do
-    start_command "#{deploy[:deploy_to]}/shared/scripts/unicorn start"
-    stop_command "#{deploy[:deploy_to]}/shared/scripts/unicorn stop"
-    restart_command "#{deploy[:deploy_to]}/shared/scripts/unicorn restart"
-    status_command "ps aux | grep unicorn_rails | grep #{deploy[:deploy_to]}"
-    action :nothing
-  end
-  
   template "#{deploy[:deploy_to]}/shared/scripts/unicorn" do
     mode '0755'
     owner deploy[:user]
@@ -23,13 +15,21 @@ node[:deploy].each do |application, deploy|
     variables(:deploy => deploy, :application => application)
   end
   
+  service "unicorn_#{application}" do
+    start_command "#{deploy[:deploy_to]}/shared/scripts/unicorn start"
+    stop_command "#{deploy[:deploy_to]}/shared/scripts/unicorn stop"
+    restart_command "#{deploy[:deploy_to]}/shared/scripts/unicorn restart"
+    status_command "ps aux | grep unicorn_rails | grep #{deploy[:deploy_to]}"
+    action :nothing
+  end
+  
   template "#{deploy[:deploy_to]}/shared/config/unicorn.conf" do
     mode '0644'
     owner deploy[:user]
     group deploy[:group]
     source "unicorn.conf.erb"
     variables(:deploy => deploy, :application => application)
-    notifies :restart, resources(:service => "unicorn_#{application}")
+    #notifies :restart, resources(:service => "unicorn_#{application}")
   end
 
 # TODO: SSL Krams
