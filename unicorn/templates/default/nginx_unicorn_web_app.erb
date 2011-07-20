@@ -1,6 +1,6 @@
 upstream unicorn_<%= @application[:domains].first %> {
  # This is the socket we configured in unicorn.rb
- server unix:/tmp/unicorn.<%= @application[:domains].first %>.sock fail_timeout=0;
+ server unix:<%= @application[:deploy_to]%>/shared/sockets/unicorn.sock fail_timeout=0;
 }
 
 server {
