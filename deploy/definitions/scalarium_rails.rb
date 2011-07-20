@@ -3,7 +3,6 @@ define :scalarium_rails do
   application = params[:app]
   
   include_recipe node[:scalarium][:rails_stack][:recipe]
-  Chef::Log.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#{node[:scalarium][:rails_stack][:recipe]}")
 
   # write out memcached.yml
   template "#{deploy[:deploy_to]}/shared/config/memcached.yml" do
