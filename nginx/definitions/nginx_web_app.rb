@@ -2,7 +2,7 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
   
   application_name = params[:name]
 
-  template "/etc/nginx/sites-available/#{application_name}.conf" do
+  template "/etc/nginx/sites-available/#{application_name}" do
     Chef::Log.debug("Generating Nginx site template for #{application_name.inspect}")
     source params[:template]
     owner "root"
@@ -15,7 +15,7 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
       :application_name => application_name,
       :params => params
     )
-    if File.exists?("/etc/nginx/sites-enabled/#{application_name}.conf")
+    if File.exists?("/etc/nginx/sites-enabled/#{application_name}")
       notifies :reload, resources(:service => "nginx"), :delayed
     end
   end
