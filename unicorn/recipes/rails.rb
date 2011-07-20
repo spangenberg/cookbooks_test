@@ -6,6 +6,11 @@ node[:deploy].each do |application, deploy|
     Chef::Log.debug("Skipping unicorn::rails application #{application} as it is not an Rails app")
     next
   end
+
+  execute "slapadd" do
+    command "cd #{deploy[:current_path]} && unicorn_rails &"
+    action :run
+  end
 # TODO: SSL Krams
 =begin  
   template "/etc/apache2/ssl/#{deploy[:domains].first}.crt" do
