@@ -24,7 +24,7 @@ end
 
 def restart_unicorn
 	if unicorn_running?
-		system("kill -HUP `cat #{PID_PATH}`") || exit 1
+		system("kill -HUP `cat #{PID_PATH}`") || exit(1)
 	else
 		start_unicorn
 	end
