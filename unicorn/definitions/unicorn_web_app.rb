@@ -25,6 +25,6 @@ define :unicorn_web_app do
     ssl_certificate_ca deploy[:ssl_certificate_ca]
     cookbook "unicorn"
     deploy deploy
-    template "nginx_unicorn_web_app"
+    template "nginx_unicorn_web_app.erb"
   end
 end
