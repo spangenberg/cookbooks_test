@@ -9,7 +9,7 @@ node[:deploy].each do |application, deploy|
 
   execute "unicorn_rails" do
     cwd "#{deploy[:deploy_to]}/current"
-    command "unicorn_rails --env #{deploy[:rails_env]} --daemonize --listen /tmp/unicorn.#{application}.sock"
+    command "unicorn_rails --env #{deploy[:rails_env]} --daemonize"# --listen /tmp/unicorn.#{application}.sock"
     action :run
   end
 # TODO: SSL Krams
