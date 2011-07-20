@@ -5,7 +5,13 @@ APP_NAME="<%= @application %>"
 PID_PATH="<%= @deploy[:deploy_to] %>/shared/pids/unicorn.pid"
 
 def start_unicorn
-  `unicorn_rails --env <%= @deploy[:rails_env] %> --daemonize -c #{ROOT_PATH}/shared/config/unicorn.conf`
+  if File.exists?("#{ROOT_PATH}/current/Gemfile")
+    puts "Scalarium: Gemfile detected - running Unicorn with bundle exec"
+    `/usr/local/bin/bundle exec unicorn_rails --env <%= @deploy[:rails_env] %> --daemonize -c #{ROOT_PATH}/shared/config/unicorn.conf`
+  else
+    puts "Scalarium: no Gemfile detected - running plain Unicorn"
+    `unicorn_rails --env <%= @deploy[:rails_env] %> --daemonize -c #{ROOT_PATH}/shared/config/unicorn.conf`
+  end
 end
 
 def stop_unicorn
