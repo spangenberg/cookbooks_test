@@ -5,7 +5,6 @@ user "<%= @deploy[:user]%>"
 working_directory "<%= @deploy[:deploy_to]%>/current"
 
 listen "<%= @deploy[:deploy_to]%>/shared/sockets/unicorn.sock", :backlog => <%= node[:unicorn][:backlog] %>
-listen 8080, :tcp_nopush => true
 
 timeout <%= node[:unicorn][:timeout] %>
 

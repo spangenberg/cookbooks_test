@@ -1,5 +1,4 @@
 upstream unicorn_<%= @application[:domains].first %> {
- # This is the socket we configured in unicorn.rb
  server unix:<%= @application[:deploy_to]%>/shared/sockets/unicorn.sock fail_timeout=0;
 }
 
@@ -10,7 +9,6 @@ server {
 
   keepalive_timeout 5;
 
-  # Location of our static files
   root <%= @application[:absolute_document_root] %>;
 
   location / {
