@@ -1,3 +1,4 @@
+<%= raise @application.to_hash.inspect %>
 server {
   listen   80;
   server_name  <%= @application[:domains].join(" ") %> <%= node[:hostname] %>;
