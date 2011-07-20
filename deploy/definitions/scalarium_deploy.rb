@@ -110,8 +110,7 @@ define :scalarium_deploy do
   # Need to be uncommented in production
   # XXX
   if deploy[:application_type] == 'rails'# && node[:scalarium][:instance][:roles].include?('rails-app')
-    Chef::Log.error(node[:scalarium][:rails_stack].inspect)
-    case node[:scalarium][:rails_stack]
+    case node[:scalarium][:rails_stack][:name]
 
     when 'apache_passenger'
       passenger_web_app do
