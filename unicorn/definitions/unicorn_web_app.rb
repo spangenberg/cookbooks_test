@@ -16,7 +16,7 @@ define :unicorn_web_app do
     end
   end
 
-  web_app deploy[:application] do
+  nginx_web_app deploy[:application] do
     docroot deploy[:absolute_document_root]
     server_name deploy[:domains].first
     server_aliases deploy[:domains][1, deploy[:domains].size] unless deploy[:domains][1, deploy[:domains].size].empty?
