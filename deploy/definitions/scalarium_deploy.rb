@@ -57,7 +57,7 @@ define :scalarium_deploy do
       environment deploy[:environment]
       symlink_before_migrate deploy[:symlink_before_migrate]
       action deploy[:action]
-      restart_command "sleep #{deploy[:sleep_before_restart]} && #{deploy[:restart_command]}"
+      restart_command "sleep #{deploy[:sleep_before_restart]} && #{node[:scalarium][:rails_stack][:restart_command]}"
       case deploy[:scm][:scm_type].to_s
       when 'git'
         scm_provider :git
@@ -123,10 +123,12 @@ define :scalarium_deploy do
         application application
         deploy deploy
       end
-
+      
     else
       raise "Unsupport Rails stack"
     end
+    
+    include_recipe node[:scalarium][:rails_stack][:recipe]
   end
 
   template "/etc/logrotate.d/scalarium_app_#{application}" do

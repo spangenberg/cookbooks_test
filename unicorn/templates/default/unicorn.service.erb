@@ -1,0 +1,60 @@
+#!/usr/bin/ruby
+
+ROOT_PATH="<%= @deploy[:deploy_to] %>"
+APP_NAME="<%= @application %>"
+PID_PATH="<%= deploy[:deploy_to] %>/shared/pids/unicorn.pid"
+
+def start_unicorn
+  `unicorn_rails --env <%= @deploy[:rails_env] %> --daemonize -c #{ROOT_PATH}/shared/config/unicorn.conf`
+end
+
+def stop_unicorn
+  `kill -QUIT \`cat #{PID_PATH}\``
+end
+
+def restart_unicorn
+	if unicorn_running?
+		`kill -HUP \`cat #{PID_PATH}\``
+	else
+		start_unicorn
+	end
+end
+
+def status_unicorn
+	if pid = unicorn_running?
+		puts "Unicorn <%= @application %> running with PID #{pid}"
+		return true
+	else
+		puts "Unicorn <%= @application %> not running"
+		return false
+  end
+end
+
+def unicorn_running?
+  if File.exists?(PID_PATH) && pid = File.read(PID_PATH).chomp
+    system("ps aux | grep #{pid}") == 0
+  else
+    false
+  end
+end
+
+case ARGV[0]
+when "start"
+  puts "Starting Unicorn #{APP_NAME}"
+  start_unicorn
+when "stop"
+  puts "Stopping Unicorn #{APP_NAME}"
+  stop_unicorn
+when "status"
+  status_unicorn
+when "restart"
+  restart_unicorn
+when "clean-restart"
+  stop_unicorn
+  start_unicorn
+else
+  puts "Usage: {start|stop|status|restart|clean-restart}"
+  exit 1
+end
+
+exit 0

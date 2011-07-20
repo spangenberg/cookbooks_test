@@ -6,12 +6,32 @@ node[:deploy].each do |application, deploy|
     Chef::Log.debug("Skipping unicorn::rails application #{application} as it is not an Rails app")
     next
   end
-
-  execute "unicorn_rails" do
-    cwd "#{deploy[:deploy_to]}/current"
-    command "unicorn_rails --env #{deploy[:rails_env]} --daemonize -c /tmp/unicorn.conf"# --listen /tmp/unicorn.#{application}.sock"
-    action :run
+  
+  service "unicorn_#{application}" do
+    start_command "#{deploy[:deploy_to]}/shared/scripts/unicorn start"
+    stop_command "#{deploy[:deploy_to]}/shared/scripts/unicorn stop"
+    restart_command "#{deploy[:deploy_to]}/shared/scripts/unicorn restart"
+    status_command "ps aux | grep unicorn_rails | grep #{deploy[:deploy_to]}"
+    action :nothing
   end
+  
+  template "#{deploy[:deploy_to]}/shared/scripts/unicorn" do
+    mode '0755'
+    owner deploy[:user]
+    group deploy[:group]
+    source "unicorn.service.erb"
+    variables(:deploy => deploy, :application => application)
+  end
+  
+  template "#{deploy[:deploy_to]}/shared/config/unicorn.conf" do
+    mode '0644'
+    owner deploy[:user]
+    group deploy[:group]
+    source "unicorn.conf.erb"
+    variables(:deploy => deploy, :application => application)
+    notifies :restart, resources(:service => "unicorn_#{application}")
+  end
+
 # TODO: SSL Krams
 =begin  
   template "/etc/apache2/ssl/#{deploy[:domains].first}.crt" do
