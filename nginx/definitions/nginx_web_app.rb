@@ -30,33 +30,33 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
     mode 0600
   end
   
-  template "#{node[:nginx][:dir]}/ssl/#{deploy[:domains].first}.crt" do
+  template "#{node[:nginx][:dir]}/ssl/#{application[:domains].first}.crt" do
     cookbook 'nginx'
     mode '0600'
     source "ssl.key.erb"
-    variables :key => deploy[:ssl_certificate]
+    variables :key => application[:ssl_certificate]
     only_if do
-      deploy[:ssl_support]
+      application[:ssl_support]
     end
   end
   
-  template "#{node[:nginx][:dir]}/ssl/#{deploy[:domains].first}.key" do
+  template "#{node[:nginx][:dir]}/ssl/#{application[:domains].first}.key" do
     cookbook 'nginx'
     mode '0600'
     source "ssl.key.erb"
-    variables :key => deploy[:ssl_certificate_key]
+    variables :key => application[:ssl_certificate_key]
     only_if do
-      deploy[:ssl_support]
+      application[:ssl_support]
     end
   end
   
-  template "#{node[:nginx][:dir]}/ssl/#{deploy[:domains].first}.ca" do
+  template "#{node[:nginx][:dir]}/ssl/#{application[:domains].first}.ca" do
     cookbook 'nginx'
     mode '0600'
     source "ssl.key.erb"
-    variables :key => deploy[:ssl_certificate_ca]
+    variables :key => application[:ssl_certificate_ca]
     only_if do
-      deploy[:ssl_support] && deploy[:ssl_certificate_ca]
+      application[:ssl_support] && application[:ssl_certificate_ca]
     end
   end
   
