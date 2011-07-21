@@ -11,7 +11,7 @@ node[:deploy].each do |application, deploy|
     next
   end
 
-  case node[:scalarium][:rails_stack][:service]
+  case node[:scalarium][:rails_stack][:name]
 
   when 'apache_passenger'
     include_recipe "#{node[:scalarium][:rails_stack][:service]}::service" if node[:scalarium][:rails_stack][:service]
