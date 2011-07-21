@@ -4,7 +4,7 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
   application = params[:application]
   application_name = params[:name]
 
-  template "/etc/nginx/sites-available/#{application_name}" do
+  template "#{node[:nginx][:dir]}/sites-available/#{application_name}" do
     Chef::Log.debug("Generating Nginx site template for #{application_name.inspect}")
     source params[:template]
     owner "root"
@@ -18,9 +18,47 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
       :application_name => application_name,
       :params => params
     )
-    if File.exists?("/etc/nginx/sites-enabled/#{application_name}")
+    if File.exists?("#{node[:nginx][:dir]}/sites-enabled/#{application_name}")
       notifies :reload, resources(:service => "nginx"), :delayed
     end
+  end
+
+  directory "#{node[:nginx][:dir]}/ssl" do
+    action :create
+    owner "root"
+    group "root"
+    mode 0600
+  end
+  
+  template "#{node[:nginx][:dir]}/ssl/#{deploy[:domains].first}.crt" do
+    mode '0600'
+    source "ssl.key.erb"
+    variables :key => deploy[:ssl_certificate]
+    only_if do
+      deploy[:ssl_support]
+    end
+  end
+  
+  template "#{node[:nginx][:dir]}/ssl/#{deploy[:domains].first}.key" do
+    mode '0600'
+    source "ssl.key.erb"
+    variables :key => deploy[:ssl_certificate_key]
+    only_if do
+      deploy[:ssl_support]
+    end
+  end
+  
+  template "#{node[:nginx][:dir]}/ssl/#{deploy[:domains].first}.ca" do
+    mode '0600'
+    source "ssl.key.erb"
+    variables :key => deploy[:ssl_certificate_ca]
+    only_if do
+      deploy[:ssl_support] && deploy[:ssl_certificate_ca]
+    end
+  end
+  
+  file "#{node[:nginx][:dir]}/sites-enabled/default" do
+    action :delete
   end
   
   include_recipe "nginx::service"

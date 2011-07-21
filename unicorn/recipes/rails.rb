@@ -29,36 +29,5 @@ node[:deploy].each do |application, deploy|
     group deploy[:group]
     source "unicorn.conf.erb"
     variables(:deploy => deploy, :application => application)
-    #notifies :restart, resources(:service => "unicorn_#{application}")
   end
-
-# TODO: SSL Krams
-=begin  
-  template "/etc/apache2/ssl/#{deploy[:domains].first}.crt" do
-    mode '0600'
-    source "ssl.key.erb"
-    variables :key => deploy[:ssl_certificate]
-    only_if do
-      deploy[:ssl_support]
-    end
-  end
-  
-  template "/etc/apache2/ssl/#{deploy[:domains].first}.key" do
-    mode '0600'
-    source "ssl.key.erb"
-    variables :key => deploy[:ssl_certificate_key]
-    only_if do
-      deploy[:ssl_support]
-    end
-  end
-  
-  template "/etc/apache2/ssl/#{deploy[:domains].first}.ca" do
-    mode '0600'
-    source "ssl.key.erb"
-    variables :key => deploy[:ssl_certificate_ca]
-    only_if do
-      deploy[:ssl_support] && deploy[:ssl_certificate_ca]
-    end
-  end
-=end
 end

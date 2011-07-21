@@ -23,4 +23,3 @@ attribute "rails/max_pool_size",
   :display_name => "Rails Max Pool Size",
   :description => "Specify the MaxPoolSize in the Apache vhost",
   :default => "4"
-
