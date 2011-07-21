@@ -53,8 +53,8 @@ node[:deploy].each do |application, deploy|
       end
     end
 
-    Chef::Log.error "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sleep #{deploy[:sleep_before_restart]} && #{application[:deploy_to]}/shared/scripts/unicorn stop"
-    command "sleep #{deploy[:sleep_before_restart]} && #{application[:deploy_to]}/shared/scripts/unicorn stop"
+    Chef::Log.error "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sleep #{deploy[:sleep_before_restart]} && /srv/www/#{application}/shared/scripts/unicorn stop"
+    command "sleep #{deploy[:sleep_before_restart]} && /srv/www/#{application}/shared/scripts/unicorn stop"
     notifies :restart, resources(:service => "nginx")
 
   else
