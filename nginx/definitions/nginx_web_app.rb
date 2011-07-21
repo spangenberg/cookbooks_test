@@ -62,6 +62,9 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
   
   file "#{node[:nginx][:dir]}/sites-enabled/default" do
     action :delete
+    only_if do
+      File.exists?("#{node[:nginx][:dir]}/sites-enabled/default")
+    end
   end
   
   include_recipe "nginx::service"
