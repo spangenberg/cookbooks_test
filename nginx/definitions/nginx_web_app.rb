@@ -60,6 +60,10 @@ define :nginx_web_app, :template => "site.erb", :enable => true do
     end
   end
   
+  file "#{node[:nginx][:dir]}/sites-enabled/default" do
+    action :delete
+  end
+  
   include_recipe "nginx::service"
 
   if params[:enable]
