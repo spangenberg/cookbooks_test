@@ -11,7 +11,7 @@ node[:deploy].each do |application, deploy|
     next
   end
   
-  execute "restart Passenger" do
+  execute "restart Server" do
     cwd deploy[:current_path]
     command "sleep #{deploy[:sleep_before_restart]} && #{node[:scalarium][:rails_stack][:restart_command]}"
     action :run

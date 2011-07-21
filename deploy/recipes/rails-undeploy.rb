@@ -49,6 +49,8 @@ node[:deploy].each do |application, deploy|
       end
     end
 
+    command "sleep #{deploy[:sleep_before_restart]} && ../../shared/scripts/unicorn stop"
+
   else
     raise "Unsupport Rails stack"
   end
