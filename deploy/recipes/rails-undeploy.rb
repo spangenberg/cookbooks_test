@@ -53,9 +53,11 @@ node[:deploy].each do |application, deploy|
       end
     end
 
-    Chef::Log.error "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sleep #{deploy[:sleep_before_restart]} && /srv/www/#{application}/shared/scripts/unicorn stop"
-    command "sleep #{deploy[:sleep_before_restart]} && /srv/www/#{application}/shared/scripts/unicorn stop"
-    notifies :restart, resources(:service => "nginx")
+    execute "stop unicorn and restart nginx" do
+      command "sleep #{deploy[:sleep_before_restart]} && /srv/www/#{application}/shared/scripts/unicorn stop"
+      notifies :restart, resources(:service => "nginx")
+      action :run
+    end
 
   else
     raise "Unsupport Rails stack"
