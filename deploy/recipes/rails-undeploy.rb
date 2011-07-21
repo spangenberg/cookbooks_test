@@ -35,8 +35,6 @@ node[:deploy].each do |application, deploy|
     notifies :restart, resources(:service => node[:scalarium][:rails_stack][:service])
 
   when 'nginx_unicorn'
-    include_recipe "unicorn::service"
-
     link "/etc/nginx/sites-enabled/#{application}" do
       action :delete
       only_if do 
