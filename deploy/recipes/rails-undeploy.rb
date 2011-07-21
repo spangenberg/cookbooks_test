@@ -10,12 +10,12 @@ node[:deploy].each do |application, deploy|
     Chef::Log.debug("Skipping deploy::rails-undeploy application #{application} as it is not an Rails app")
     next
   end
-  
-  include_recipe "#{node[:scalarium][:rails_stack][:service]}::service" if node[:scalarium][:rails_stack][:service]
 
   case node[:scalarium][:rails_stack][:service]
 
   when 'apache_passenger'
+    include_recipe "#{node[:scalarium][:rails_stack][:service]}::service" if node[:scalarium][:rails_stack][:service]
+
     link "/etc/apache2/sites-enabled/#{application}.conf" do
       action :delete
       only_if do 
@@ -32,7 +32,11 @@ node[:deploy].each do |application, deploy|
       end
     end
 
+    notifies :restart, resources(:service => node[:scalarium][:rails_stack][:service])
+
   when 'nginx_unicorn'
+    include_recipe "unicorn::service"
+
     link "/etc/nginx/sites-enabled/#{application}" do
       action :delete
       only_if do 
@@ -50,6 +54,7 @@ node[:deploy].each do |application, deploy|
     end
 
     command "sleep #{deploy[:sleep_before_restart]} && ../../shared/scripts/unicorn stop"
+    notifies :restart, resources(:service => "nginx")
 
   else
     raise "Unsupport Rails stack"
@@ -58,8 +63,6 @@ node[:deploy].each do |application, deploy|
   directory "#{deploy[:deploy_to]}" do
     recursive true
     action :delete
-
-    notifies :restart, resources(:service => node[:scalarium][:rails_stack][:service])
   
     only_if do 
       File.exists?("#{deploy[:deploy_to]}")
