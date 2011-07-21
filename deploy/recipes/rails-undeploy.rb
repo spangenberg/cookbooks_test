@@ -53,7 +53,7 @@ node[:deploy].each do |application, deploy|
       end
     end
 
-    command "sleep #{deploy[:sleep_before_restart]} && ../../shared/scripts/unicorn stop"
+    command "sleep #{deploy[:sleep_before_restart]} && #{application[:deploy_to]}/shared/scripts/unicorn stop"
     notifies :restart, resources(:service => "nginx")
 
   else
