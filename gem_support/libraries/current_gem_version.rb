@@ -21,6 +21,15 @@ module Scalarium
     end
 
     def ensure_only_gem_version(name, ensured_version)
+      
+      versions = gem_provider(name).installed_versions
+      versions.each do |version|
+        next if version == ensured_version
+        gem_provider.uninstall(name, version)
+      end
+      
+      gem_provider.install(name, ensured_version)
+=begin
       versions = `gem list #{name}`
       versions = versions.scan(/(\d[a-zA-Z0-9\.]*)/)
       for version in versions
@@ -38,13 +47,11 @@ module Scalarium
         version ensured_version
       end
       run_context.send(:gem_package, name, &gem_options)
+=end
     end
   end
 end
 
 class Chef::Resource
-  include Scalarium::GemSupport
-end
-class Chef::Recipe
   include Scalarium::GemSupport
 end
