@@ -30,20 +30,21 @@ module Scalarium
           action :uninstall
           version version
         end
-        gem_provider(name).gem_package(name, &gem_options(version))
-        # run_context.send(:gem_package, name, &gem_options(version))
+        run_context.send(:gem_package, name, &gem_options(version))
       end
 
       gem_options = Proc.new do
         retries 2
         version ensured_version
       end
-      gem_provider(name).gem_package(name, &gem_options(version))
-      # run_context.send(:gem_package, name, &gem_options)
+      run_context.send(:gem_package, name, &gem_options)
     end
   end
 end
 
 class Chef::Resource
+  include Scalarium::GemSupport
+end
+class Chef::Recipe
   include Scalarium::GemSupport
 end
