@@ -21,7 +21,6 @@ module Scalarium
     end
 
     def ensure_only_gem_version(name, ensured_version)
-      
       versions = `gem list #{name}`
       versions = versions.scan(/(\d[a-zA-Z0-9\.]*)/)
       for version in versions
@@ -31,20 +30,16 @@ module Scalarium
           action :uninstall
           version version
         end
-        run_context.gem_package("unicorn", &gem_options(version))
-=begin
-        run_context.send(:gem_package, "unicorn", &gem_options(version))
-=end
+        gem_provider(name).gem_package(name, &gem_options(version))
+        # run_context.send(:gem_package, name, &gem_options(version))
       end
 
       gem_options = Proc.new do
         retries 2
         version ensured_version
       end
-      run_context.gem_package("unicorn", &gem_options)
-=begin
-      run_context.send(:gem_package, "unicorn", &gem_options)
-=end
+      gem_provider(name).gem_package(name, &gem_options(version))
+      # run_context.send(:gem_package, name, &gem_options)
     end
   end
 end
