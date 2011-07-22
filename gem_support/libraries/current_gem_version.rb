@@ -31,14 +31,20 @@ module Scalarium
           action :uninstall
           version version
         end
+        run_context.gem_package("unicorn", &gem_options(version))
+=begin
         run_context.send(:gem_package, "unicorn", &gem_options(version))
+=end
       end
 
       gem_options = Proc.new do
         retries 2
         version ensured_version
       end
+      run_context.gem_package("unicorn", &gem_options)
+=begin
       run_context.send(:gem_package, "unicorn", &gem_options)
+=end
     end
   end
 end
